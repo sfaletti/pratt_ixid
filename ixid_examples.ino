@@ -29,8 +29,8 @@ void loop()
 
 	//write sensor data
 	for (int i=0; i<sensorCount; i++){
-		Serial.print(pinNames[i]);
-		Serial.print(":");
+		// Serial.print(pinNames[i]);
+		// Serial.print(":");
 		Serial.print(sensorVals[i]);
 		if (i < sensorCount - 1) {
 			Serial.print(", ");
