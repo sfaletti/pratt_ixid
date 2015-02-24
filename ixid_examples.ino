@@ -1,48 +1,40 @@
 //declare pin values 
-const int potPin = 0;
-const int ledPin = 10;
-const int tonePin = 6;
+const int accelX = 0;
+const int accelY = 1;
+const int accelZ = 2;
+
+const int gyroX = 3;
+const int gyroY = 4;
+const int gyroZ = 5;
+
 
 //declare variables
-int potVal = 0;
-int ledVal = 0;
-int toneFreq = 31;
-
-//declare smoothing array variables
-const int smoothLength = 20; //convenience variable
-int smoothVals[smoothLength];
+const int sensorCount = 6; //convenience variable
+int sensorVals[sensorCount]; //array to store 6DOF sensor values
+const int sensorPins[sensorCount] = {accelX, accelY, accelZ, gyroX, gyroY, gyroZ}; //array to store pin values. This will be easier to process
+String pinNames[6] = {"aX", "aY", "aZ", "gX", "gY", "gZ"};
 
 void setup()
 {
-	// Serial.begin(9600);
-	pinMode(ledPin, OUTPUT);
-	pinMode(tonePin, OUTPUT);
+	Serial.begin(9600);
+	digitalWrite(13, HIGH);
 }
 
 void loop()
 {
-	potVal = analogRead(potPin); //read the pot
-
-	// push reading onto average array
-	for(int i=1; i<smoothLength; i++){
-	    smoothVals[i-1] = smoothVals[i];
+	//read sensor data
+	for (int i=0; i<sensorCount; i++){
+		sensorVals[i] = analogRead(sensorPins[i]);
 	}
-	smoothVals[smoothLength-1] = potVal;
 
-	ledVal = avgVals(smoothVals, smoothLength); //call the smoothing function
-	
-	analogWrite(ledPin, ledVal / 4); //turn on the LED
-
-	toneFreq = map(ledVal, 0, 1023, 50, 600);
-	tone(tonePin, toneFreq);
-
-}
-
-//function to handle averaging the array values
-int avgVals(int _array[], int _arrayLength) {
-	int avgVal = 0;
-	for (int i=0; i<_arrayLength; i++) {
-		avgVal += _array[i];
+	//write sensor data
+	for (int i=0; i<sensorCount; i++){
+		Serial.print(pinNames[i]);
+		Serial.print(":");
+		Serial.print(sensorVals[i]);
+		if (i < sensorCount - 1) {
+			Serial.print(", ");
+		}
+		else Serial.print("\n");
 	}
-	return avgVal / _arrayLength;
 }
